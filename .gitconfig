@@ -1,0 +1,27 @@
+[alias]
+        last = log -1 --stat
+        lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
+[credential]
+	helper = store
+[pull]
+	rebase = true
+[user]
+	name = Tobias Giese
+	email = tobias.giese@daimler.com
+[commit]
+	gpgSign = false
+[gui]
+	pruneduringfetch = true
+[smartgit "submodule"]
+	fetchalways = false
+	update = true
+	initializenew = true
+[push]
+	recurseSubmodules = check
+[core]
+	excludesfile = /home/tobgies/.gitignore
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
