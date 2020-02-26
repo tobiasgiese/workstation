@@ -1,0 +1,21 @@
+{
+    "terminator": "terminal",
+    "firefox": "firefox",
+    "chromium-browser": "chrome",
+    "chrome": "chrome",
+    "google-chrome": "chrome",
+    "x-terminal-emulator": "terminal",
+    "thunderbird": "envelope",
+    "jetbrains-idea-ce": "edit",
+    "jetbrains-idea": "edit",
+    "nautilus": "folder-open",
+    "clementine": "music",
+    "spotify": "spotify",
+    "vlc": "play",
+    "signal": "comment",
+    "telegramdesktop": "telegram",
+    "code": "code",
+    "gnome-control-center": "cog",
+    "gnome-tweaks": "wrench",
+    "sublime_text": "indent"
+}
