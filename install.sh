@@ -4,10 +4,16 @@ set -eo pipefail
 
 pushd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-sudo apt-get update >/dev/null
-
 isPackageInstalled() {
 	return $(dpkg-query --show --showformat='${db:Status-Status}' $1 &>/dev/null)
+}
+
+ensurePackage() {
+	echo "Ensure package $1"
+	if ! isPackageInstalled $1; then
+		echo "Install package $1"
+		sudo apt-get install -y $1
+	fi
 }
 
 ensurePPA() {
@@ -16,39 +22,6 @@ ensurePPA() {
 		sudo add-apt-repository -y ppa:$1
 	fi
 }
-
-ensurePPA regolith-linux/stable
-
-for package in \
-	apt-transport-https \
-	compton \
-	curl \
-	fonts-jetbrains-mono \
-	fonts-powerline \
-	fzf \
-	git \
-	gnome-flashback \
-	gnome-tweaks \
-	htop \
-	i3-gaps \
-	libasound2-dev \
-	make \
-	nodejs \
-	npm \
-	openssh-server \
-	pavucontrol \
-	pip \
-	rofi \
-	telegram-desktop \
-	terminator \
-	vim \
-	zsh; do
-	echo "Ensuring package $package"
-	if ! isPackageInstalled $package; then
-		echo "Install $package via aptitude"
-		sudo apt-get install -y $package
-	fi
-done
 
 ensureDotfile() {
 	echo "Ensuring dotfile $1"
@@ -65,6 +38,34 @@ ensureDotfile() {
 	fi
 	ln -s "$(pwd)/$1" "$HOME/$1"
 }
+
+sudo apt-get update >/dev/null
+
+ensurePPA regolith-linux/stable
+
+ensurePackage apt-transport-https
+ensurePackage compton
+ensurePackage curl
+ensurePackage fonts-jetbrains-mono
+ensurePackage fonts-powerline
+ensurePackage fzf
+ensurePackage git
+ensurePackage gnome-flashback
+ensurePackage gnome-tweaks
+ensurePackage htop
+ensurePackage i3-gaps
+ensurePackage libasound2-dev
+ensurePackage make
+ensurePackage nodejs
+ensurePackage npm
+ensurePackage openssh-server
+ensurePackage pavucontrol
+ensurePackage pip
+ensurePackage rofi
+ensurePackage telegram-desktop
+ensurePackage terminator
+ensurePackage vim
+ensurePackage zsh
 
 ensureDotfile .zshrc
 ensureDotfile .vimrc
