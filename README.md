@@ -5,3 +5,4 @@
 * Golang
 * Intellij
 * fzf-tab
+* bazel
