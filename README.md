@@ -19,9 +19,6 @@
     * in .zshrc: export PATH=$PATH:/usr/local/go/bin
 * fzf-tab
     * git clone https://github.com/Aloxaf/fzf-tab.git
-* npm
-    * mkdir ~/.npm-global
-    * npm config set prefix '~/.npm-global'
 
 ## Troubleshooting
 
