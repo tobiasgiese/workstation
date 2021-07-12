@@ -6,8 +6,8 @@ hi CursorColumn cterm=NONE ctermbg=0
 " Set Proper Tabs
 set tabstop=4
 set shiftwidth=4
-set smarttab
-set expandtab
+" set smarttab
+" set expandtab
 " syntax highlighting
 syntax enable
 set hlsearch
