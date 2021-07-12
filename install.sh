@@ -5,7 +5,7 @@ set -eo pipefail
 pushd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 isPackageInstalled() {
-	return $(dpkg-query --show $1 &>/dev/null)
+	return $(dpkg-query --show $1 &> /dev/null)
 }
 
 ensurePackage() {
@@ -39,7 +39,7 @@ ensureDotfile() {
 	ln -s "$(pwd)/dotfiles/$1" "$HOME/$1"
 }
 
-sudo apt-get update >/dev/null
+sudo apt-get update > /dev/null
 
 ensurePPA regolith-linux/stable
 
@@ -87,7 +87,7 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 fi
 
 echo "Ensure Google Chrome"
-if ! command -v google-chrome-stable >/dev/null; then
+if ! command -v google-chrome-stable > /dev/null; then
 	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 	sudo dpkg -i google-chrome-stable_current_amd64.deb
 	rm google-chrome-stable_current_amd64.deb
@@ -97,13 +97,13 @@ echo "Ensure Signal"
 if ! isPackageInstalled signal-desktop; then
 	wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 	cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-	echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-	  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+	echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' \
+		| sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
 	sudo apt update && sudo apt install signal-desktop
 fi
 
 echo "Ensure power-menu"
-if ! command -v rofi-power-menu >/dev/null; then
+if ! command -v rofi-power-menu > /dev/null; then
 	git clone https://github.com/jluttine/rofi-power-menu.git $HOME/projects/github.com/
 	cp rofi-power-menu/rofi-power-menu ~/bin/
 fi
@@ -121,7 +121,7 @@ echo "Ensure docker-ce"
 if ! isPackageInstalled docker-ce; then
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository \
-	   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+		"deb [arch=amd64] https://download.docker.com/linux/ubuntu \
 	   $(lsb_release -cs) \
 	   stable"
 	sudo apt-get update
@@ -130,14 +130,14 @@ fi
 
 echo "Ensure Spotify"
 if ! isPackageInstalled spotify-client; then
-	curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | sudo apt-key add - 
+	curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | sudo apt-key add -
 	echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
 	sudo apt-get update
 	sudo apt-get install -y spotify-client
 fi
 
 echo "Ensure greenclip"
-if ! command -v greenclip >/dev/null; then
+if ! command -v greenclip > /dev/null; then
 	wget https://github.com/erebe/greenclip/releases/download/v4.2/greenclip -O $HOME/bin/greenclip
 	chmod +x $HOME/bin/greenclip
 	cat <<- EOF > $HOME/.config/systemd/user/greenclip.service
