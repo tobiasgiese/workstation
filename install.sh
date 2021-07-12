@@ -5,7 +5,7 @@ set -eo pipefail
 pushd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 isPackageInstalled() {
-	return $(dpkg-query --show --showformat='${db:Status-Status}' $1 &>/dev/null)
+	return $(dpkg-query --show $1 &>/dev/null)
 }
 
 ensurePackage() {
