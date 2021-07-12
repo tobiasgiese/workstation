@@ -165,6 +165,11 @@ if ! command -v greenclip > /dev/null; then
 	systemctl --user start greenclip
 fi
 
+echo "Ensure i3-workspace-names-daemon"
+if ! command -v i3-workspace-names-daemon > /dev/null; then
+	sudo pip3 install i3-workspace-names-daemon
+fi
+
 echo "Ensure NOPASSWD in sudoers file"
 if ! sudo grep -qE '%sudo.*NOPASSWD' /etc/sudoers; then
 	sudo sed -i s'/^%sudo.*/%sudo   ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
