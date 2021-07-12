@@ -17,14 +17,14 @@ ensurePackage() {
 }
 
 ensurePPA() {
-	echo "Ensuring ppa:$1"
+	echo "Ensure ppa:$1"
 	if ! apt-cache policy | awk '/http/{print $2}' | grep -q $1; then
 		sudo add-apt-repository -y ppa:$1
 	fi
 }
 
 ensureDotfile() {
-	echo "Ensuring dotfile $1"
+	echo "Ensure dotfile $1"
 	if [[ -f "$HOME/$1" && ! -L "$HOME/$1" ]]; then
 		echo "Moving file $HOME/$1 to $HOME/$1.bkp-$(date +%Y%m%d)"
 		mv "$HOME/$1" "$HOME/$1.bkp-$(date +%Y%m%d)"
@@ -74,26 +74,26 @@ ensureDotfile .config/i3/config
 ensureDotfile .config/i3/app-icons.json
 ensureDotfile .config/terminator/config
 
-echo "Ensuring ~/bin"
+echo "Ensure ~/bin"
 mkdir -p $HOME/bin
 
-echo "Ensuring ~/.config/systemd/user"
+echo "Ensure ~/.config/systemd/user"
 mkdir -p $HOME/.config/systemd/user
 
-echo "Ensuring oh-my-zsh"
+echo "Ensure oh-my-zsh"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --skip-chsh
 	sudo chsh -s /usr/bin/zsh
 fi
 
-echo "Ensuring Google Chrome"
+echo "Ensure Google Chrome"
 if ! command -v google-chrome-stable >/dev/null; then
 	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 	sudo dpkg -i google-chrome-stable_current_amd64.deb
 	rm google-chrome-stable_current_amd64.deb
 fi
 
-echo "Ensuring Signal"
+echo "Ensure Signal"
 if ! isPackageInstalled signal-desktop; then
 	wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 	cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
@@ -102,13 +102,13 @@ if ! isPackageInstalled signal-desktop; then
 	sudo apt update && sudo apt install signal-desktop
 fi
 
-echo "Ensuring power-menu"
+echo "Ensure power-menu"
 if ! command -v rofi-power-menu >/dev/null; then
 	git clone https://github.com/jluttine/rofi-power-menu.git $HOME/projects/github.com/
 	cp rofi-power-menu/rofi-power-menu ~/bin/
 fi
 
-echo "Ensuring latest kubectl"
+echo "Ensure latest kubectl"
 k8sVersion=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 if [[ ! -f "$HOME/bin/kubectl-${k8sVersion}" ]]; then
 	curl -LO "https://storage.googleapis.com/kubernetes-release/release/${k8sVersion}/bin/linux/amd64/kubectl"
@@ -117,7 +117,7 @@ if [[ ! -f "$HOME/bin/kubectl-${k8sVersion}" ]]; then
 	ln -fs "$HOME/bin/kubectl-$k8sVersion" "$HOME/bin/kubectl"
 fi
 
-echo "Ensuring docker-ce"
+echo "Ensure docker-ce"
 if ! isPackageInstalled docker-ce; then
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository \
@@ -128,7 +128,7 @@ if ! isPackageInstalled docker-ce; then
 	sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 fi
 
-echo "Ensuring Spotify"
+echo "Ensure Spotify"
 if ! isPackageInstalled spotify-client; then
 	curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | sudo apt-key add - 
 	echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
@@ -136,7 +136,7 @@ if ! isPackageInstalled spotify-client; then
 	sudo apt-get install -y spotify-client
 fi
 
-echo "Ensuring greenclip"
+echo "Ensure greenclip"
 if ! command -v greenclip >/dev/null; then
 	wget https://github.com/erebe/greenclip/releases/download/v4.2/greenclip -O $HOME/bin/greenclip
 	chmod +x $HOME/bin/greenclip
@@ -157,7 +157,7 @@ if ! command -v greenclip >/dev/null; then
 	systemctl --user start greenclip
 fi
 
-echo "Ensuring NOPASSWD in sudoers file"
+echo "Ensure NOPASSWD in sudoers file"
 if ! sudo grep -qE '%sudo.*NOPASSWD' /etc/sudoers; then
 	sudo sed -i s'/^%sudo.*/%sudo   ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 fi
