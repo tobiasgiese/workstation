@@ -30,13 +30,13 @@ ensureDotfile() {
 		mv "$HOME/$1" "$HOME/$1.bkp-$(date +%Y%m%d)"
 	fi
 	if [[ -L "$HOME/$1" ]]; then
-		if [[ "$(readlink "$HOME/$1")" == "$(pwd)/$1" ]]; then
+		if [[ "$(readlink "$HOME/$1")" == "$(pwd)/dotfiles/$1" ]]; then
 			return
 		fi
-		ln -sf "$(pwd)/$1" "$HOME/$1"
+		ln -sf "$(pwd)/dotfiles/$1" "$HOME/$1"
 		return
 	fi
-	ln -s "$(pwd)/$1" "$HOME/$1"
+	ln -s "$(pwd)/dotfiles/$1" "$HOME/$1"
 }
 
 sudo apt-get update >/dev/null
