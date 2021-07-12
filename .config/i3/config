@@ -1,4 +1,4 @@
-# i3 config file for the Regolith Desktop Environment                                                                                                                                                              
+# i3 config file for the Regolith Desktop Environment
 # 
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
  
@@ -20,9 +20,13 @@ set_from_resource $ws8  i3-wm.workspace.08.name "8"
 set_from_resource $ws9  i3-wm.workspace.09.name "9"
 set_from_resource $ws10 i3-wm.workspace.10.name "10"
 
-workspace 1 output DP-1-1
-workspace 5 output eDP-1
-workspace 10 output DP-1-2
+set $monitor_one DP-2
+set $monitor_two DP-0
+
+## Bind the workspaces for monitor_three
+workspace $ws10 output $monitor_two
+## Bind the workspaces for monitor_two
+workspace $ws1 output $monitor_one
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -45,7 +49,7 @@ bindsym $mod+d exec rofi -show-icons -sync -modi drun -show drun
 bindsym $mod+Shift+w exec rofi -show window -modi window
 
 # rofi & greenclip clipboard manager
-bindsym $mod+Shift+h exec rofi -modi "clipboard:/home/tobgies/bin/greenclip print" -show clipboard -run-command '{cmd}'
+bindsym $mod+Shift+h exec rofi -modi "clipboard:/home/tobias/bin/greenclip print" -show clipboard -run-command '{cmd}'
 
 # change focus
 bindsym $mod+Left focus left
@@ -134,13 +138,15 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # power menu
-bindsym $mod+Escape exec /home/tobgies/bin/power-menu.sh
+bindsym $mod+Shift+Escape exec /usr/bin/rofi -show power-menu -modi power-menu:"/home/tobias/bin/rofi-power-menu"
 
 # lock screen
 bindsym $mod+l exec /usr/local/bin/my-i3lock
+bindsym $mod+Shift+k exec setxkbmap eu
 
 # shortcuts for common system configuration tasks
 bindsym $mod+Shift+n exec nautilus
+bindsym $mod+Shift+i exec /home/tobias/bin/intellij-idea-ultimate
 
 # Toggle bar visibility
 bindsym $mod+i bar mode toggle
@@ -205,21 +211,43 @@ focus_follows_mouse yes
 
 # The bar configuration
 bar {
-    status_command exec ~/bin/mybar
-    position top
-    font pango:Hack Regular 12
-    tray_padding 0
-    tray_output primary
+   status_command exec ~/bin/mybar
+  #status_command i3status
+  font pango:DejaVu Sans Mono 12
+  position top
+  font pango:JetBrains Mono 12
+  #tray_padding 0
+  tray_output primary
+  colors {
+    background #282A36
+    statusline #F8F8F2
+    separator  #44475A
+
+    focused_workspace  #44475A #44475A #F8F8F2
+    active_workspace   #282A36 #44475A #F8F8F2
+    inactive_workspace #282A36 #282A36 #BFBFBF
+    urgent_workspace   #FF5555 #FF5555 #F8F8F2
+    binding_mode       #FF5555 #FF5555 #F8F8F2
+  }
 }
+
+# class                 border  bground text    indicator child_border
+client.focused          #6272A4 #6272A4 #F8F8F2 #6272A4   #6272A4
+client.focused_inactive #44475A #44475A #F8F8F2 #44475A   #44475A
+client.unfocused        #282A36 #282A36 #BFBFBF #282A36   #282A36
+client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
+client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
+
+client.background       #F8F8F2
 
 # The following exec calls run programs in the background when i3 starts.
 
 exec --no-startup-id /usr/lib/gnome-settings-daemon/gsd-xsettings
 exec --no-startup-id gnome-flashback
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec --no-startup-id pidgin
-exec_always --no-startup-id feh --bg-fill ~/Pictures/pexels-photo-39811.jpeg
-exec_always --no-startup-id compton --config ~/.config/compton.conf
+exec --no-startup-id exec /home/tobias/bin/greenclip daemon
+exec_always --no-startup-id compton
 exec_always --no-startup-id nm-applet
 exec_always --no-startup-id exec i3-workspace-names-daemon
-
+exec_always --no-startup-id exec echo 0 | sudo tee /sys/module/hid_apple/parameters/fnmode
+exec_always --no-startup-id exec setxkbmap eu

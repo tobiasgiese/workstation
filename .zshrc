@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/tobgies/.oh-my-zsh"
+export ZSH="/home/tobias/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -70,6 +70,9 @@ DISABLE_AUTO_UPDATE="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
+HISTSIZE=999999999
+SAVEHIST=$HISTSIZE
+
 # zstyle :omz:plugins:ssh-agent identities id_rsa id_rsa_dhcsvc
 source $ZSH/oh-my-zsh.sh
 
@@ -101,30 +104,21 @@ source $ZSH/oh-my-zsh.sh
 
 # eval $(keychain --systemd id_rsa id_rsa_dhcsvc)
 # export TERM=linux
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PATH:$PYENV_ROOT/bin:$HOME/bin:$HOME/go/bin:/snap/bin/:/usr/local/kubebuilder/bin"
-export T1_HOME="$HOME/projects/git.daimler.com/c445/t1"
-export PYENV_ROOT="$HOME/.pyenv"
-export GOPATH="$HOME/go"
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PATH:$PYENV_ROOT/bin:$HOME/bin:$HOME/go/bin:/snap/bin/:/usr/local/kubebuilder/bin:$HOME/.local/bin"
+export PATH="$PATH:$HOME/bin:/usr/local/go/bin:/snap/bin/:/usr/local/kubebuilder/bin:$HOME/.local/bin:$HOME/go/bin:$HOME/.npm-global/bin"
 export EDITOR=vim
 export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
 export LESS=' -R '
 
-alias t1='cd $T1_HOME'
-alias t1s='cd $t1_caas_secrets_path'
-alias t1code="code $T1_HOME"
 alias ip="ip -c"
 
-if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)"; fi
-eval "$(pyenv virtualenv-init -)"
+# if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)"; fi
+# eval "$(pyenv virtualenv-init -)"
 
 autoload bashcompinit
 bashcompinit
-source $T1_HOME/caas/dev-env/workstation/alias.sh
 source <(kubectl completion zsh)
-alias kk="kubectl -n kube-system"
-alias kc="kubectl -n caas-system"
-alias ki="kubectl -n istio-system"
 
 x-bash-backward-kill-word(){
 WORDCHARS='*?_-[]~\!#$%^(){}<>|`@#$%^*()+:?' zle backward-kill-word
@@ -133,31 +127,56 @@ zle -N x-bash-backward-kill-word
 bindkey '^W' x-bash-backward-kill-word
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /home/tobgies/bin/vault-1.2.3 vault
-complete -o nospace -C /home/tobgies/bin/consul-1.6.2 consul
 
-alias todo="code ~/todo"
-alias todo_update="cd ~/todo; git pull -r; git add .; git commit -m update; git push"
-alias watch="watch -n1 "
-alias kns='kubectl config set-context --current --namespace'
+# fzf setup
+export FZF_DEFAULT_COMMAND='rg --files --hidden'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# From: /usr/share/doc/fzf/README.Debian
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
+# load fzf
+source /home/tobias/projects/github.com/fzf-tab/fzf-tab.plugin.zsh
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# preview directory's content with exa when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# switch group using `,` and `.`
+zstyle ':fzf-tab:*' switch-group ',' '.'
+#To save every command before it is executed (this is different from bash's history -a solution):
+setopt inc_append_history
+#To retrieve the history file everytime history is called upon.
+setopt share_history
+
+# k8s aliases
+alias kk="kubectl -n kube-system"
 alias k=kubectl
-alias openstack="openstack --insecure"
+
 alias i3edit="vim ~/.config/i3/config"
 
-
-function tss_mount_dir() {
-	sudo mkdir -p /media/$USER/tss/share
-	sudo mount -t cifs -o user=$USER,cruid=$USER,sec=krb5,gid=$GID,uid=$UID //s415001f.detss.corpintra.net/E415_Austausch /media/$USER/tss/share
-	sudo mkdir -p /media/$USER/tss/public
-	sudo mount -t cifs -o user=$USER,cruid=$USER,sec=krb5,gid=$GID,uid=$UID //s415f005.detss.corpintra.net/E415 /media/$USER/tss/public
-	sudo mkdir -p /media/$USER/tss/home
-	sudo mount -t cifs -o user=$USER,cruid=$USER,sec=krb5,gid=$GID,uid=$UID //s415001f.detss.corpintra.net/$USER\$ /media/$USER/tss/home
-}
-
-function tss_umount_dir() {
-	sudo umount /media/$USER/tss/share
-	sudo umount /media/$USER/tss/public
-	sudo umount /media/$USER/tss/home
-}
-
 export LC_ALL=en_US.UTF-8
+# Enable DOCKER_REPO_CACHE for bazel container_pull rules
+export DOCKER_REPO_CACHE=$HOME/.cache/bazel/docker-repo-cache
+mkdir -p $DOCKER_REPO_CACHE
+
+alias fixlr='stty onlcr; stty sane'
+
+fpath[1,0]=~/.zsh/completion/
+
+# bazel run fzf completion
+function bazel_completion() {
+    label=$(bazel query "..." | fzf)
+    currentShell="$(ps -hp $$ | awk '{print $5}')"
+    if [[ "$currentShell" =~ bash ]]; then
+        bind '"\e[0n": "bazel $1 $label"'
+        printf '\e[5n'
+    elif [[ "$currentShell" =~ zsh ]]; then
+        print -z bazel $1 "$label"
+    fi
+}
+# only for zsh:
+alias br='bazel_completion run' 
+alias bb='bazel_completion build'
