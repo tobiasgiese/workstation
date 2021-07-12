@@ -86,6 +86,14 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 	sudo chsh -s /usr/bin/zsh
 fi
 
+echo "Ensure i3-gnome"
+if ! command -v i3-gnome > /dev/null; then
+	git clone https://github.com/i3-gnome/i3-gnome.git $HOME/projects/github.com/i3-gnome
+	sudo make -C $HOME /projects/github.com/i3-gnome/ install
+	gsettings set org.gnome.gnome-flashback desktop false
+	gsettings set org.gnome.gnome-flashback root-background true
+fi
+
 echo "Ensure Google Chrome"
 if ! command -v google-chrome-stable > /dev/null; then
 	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -104,7 +112,7 @@ fi
 
 echo "Ensure power-menu"
 if ! command -v rofi-power-menu > /dev/null; then
-	git clone https://github.com/jluttine/rofi-power-menu.git $HOME/projects/github.com/
+	git clone https://github.com/jluttine/rofi-power-menu.git $HOME/projects/github.com/rofi-power-menu
 	cp rofi-power-menu/rofi-power-menu ~/bin/
 fi
 
