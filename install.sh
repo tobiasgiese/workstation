@@ -29,9 +29,6 @@ ensureDotfile() {
 		echo "Moving file $HOME/$1 to $HOME/$1.bkp-$(date +%Y%m%d)"
 		mv "$HOME/$1" "$HOME/$1.bkp-$(date +%Y%m%d)"
 	fi
-	if [[ -L "$HOME/$1" && "$(readlink "$HOME/$1")" == "$(pwd)/dotfiles/$1" ]]; then
-		return
-	fi
 	ln -fs "$(pwd)/dotfiles/$1" "$HOME/$1"
 }
 
