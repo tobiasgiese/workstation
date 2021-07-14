@@ -1,4 +1,4 @@
-# Dotfiles for Ubuntu Linux 21.04
+# Workstation Ubuntu Linux 21.04
 
 ## Todo
 
