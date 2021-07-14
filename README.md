@@ -22,7 +22,7 @@
 
 ## Troubleshooting
 
-* blank screen on first boot
+* blank screen on first boot after fresh install
     * boot with advanced settings
         * recovery mode
         * network
